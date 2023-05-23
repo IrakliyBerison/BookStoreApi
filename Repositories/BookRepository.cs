@@ -65,10 +65,11 @@ namespace BookStoreApi.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<Book> SetBookStateToExistAsync(Book book)
+        public async Task<Book> SetBookStateToExistAsync(Book book, User user)
         {
 
             book.State = context.BookStates.FirstOrDefault(x => x.Id == 2);
+            book.ModifiedBy = user;
             context.Books.Update(book);
 
             await context.SaveChangesAsync();
@@ -77,9 +78,10 @@ namespace BookStoreApi.Repositories
 
         }
 
-        public async Task<Book> SetBookStateToSoldAsync(Book book)
+        public async Task<Book> SetBookStateToSoldAsync(Book book, User user)
         {
             book.State = context.BookStates.FirstOrDefault(x => x.Id == 1);
+            book.ModifiedBy = user;
             context.Books.Update(book);
 
             await context.SaveChangesAsync();

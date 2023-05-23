@@ -13,5 +13,6 @@ namespace BookStoreApi.Models
         public DateTime ReleaseDate { get; set; }
         public Author? Author { get; set; }
         public BookState? State { get; set; }
+        public User? ModifiedBy { get; set; }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using BookStoreApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Security.Claims;
 
 namespace BookStoreApi.Controllers
 {
@@ -10,12 +13,14 @@ namespace BookStoreApi.Controllers
     {
 
         private readonly IBookRepository bookRepository;
+        private readonly IUserRepository userRepository;
 
-        public BooksController(IBookRepository bookRepository)
+        public BooksController(IBookRepository bookRepository, IUserRepository userRepository)
         {
             this.bookRepository = bookRepository;
+            this.userRepository = userRepository;
         }
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("get-all-books")]
         public async Task<IActionResult> GetAllBooks()
@@ -24,6 +29,7 @@ namespace BookStoreApi.Controllers
             return Ok(books);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("create-book")]
         public async Task<IActionResult> CreateBooksWithAuthorFullNameAsync(string title, string firstName, string lastName, string? surname)
@@ -31,7 +37,7 @@ namespace BookStoreApi.Controllers
             var books = await bookRepository.CreateBooksWithAuthorFullNameAsync(title, firstName, lastName, surname);
             return Ok(books);
         }
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("get-book-by-title")]
         public async Task<IActionResult> GetBookByTitleAsync(string title)
@@ -40,7 +46,7 @@ namespace BookStoreApi.Controllers
             return Ok(books);
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("get-book-by-key-field")]
         public async Task<IActionResult> SearchBookByKeyValuesAsync(string value)
@@ -49,7 +55,7 @@ namespace BookStoreApi.Controllers
             return Ok(books);
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("delete-books")]
         public async Task<IActionResult> DeleteBookAsync(Guid id)
@@ -59,23 +65,49 @@ namespace BookStoreApi.Controllers
             return Ok();
         }
 
-
+        [Authorize]
         [HttpGet]
         [Route("set-book-exist")]
         public async Task<IActionResult> SetBookStateToExistAsync(Guid id)
         {
-            var book = await bookRepository.GetBookByIdAsync(id);
-            await bookRepository.SetBookStateToExistAsync(book);
-            return Ok();
+            if (HttpContext.User.Identity is ClaimsIdentity identity && identity.IsAuthenticated)
+            {
+                var userid = identity.FindFirst("id").Value;
+                var user = await userRepository.GetUserAsync(new Guid(userid));
+                var book = await bookRepository.GetBookByIdAsync(id);
+                if (book == null)
+                {
+                    return new ObjectResult("Не найдена книга") { StatusCode = (int)HttpStatusCode.NotFound };
+                }
+                await bookRepository.SetBookStateToExistAsync(book, user);
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
-
+        [Authorize]
         [HttpGet]
         [Route("set-book-solded")]
         public async Task<IActionResult> SetBookStateToSoldAsync(Guid id)
         {
-            var book = await bookRepository.GetBookByIdAsync(id);
-            await bookRepository.SetBookStateToSoldAsync(book);
-            return Ok();
+            if (HttpContext.User.Identity is ClaimsIdentity identity && identity.IsAuthenticated)
+            {
+                var userid = identity.FindFirst("id").Value;
+                var user = await userRepository.GetUserAsync(new Guid(userid));
+                var book = await bookRepository.GetBookByIdAsync(id);
+                if (book == null)
+                {
+                    return new ObjectResult("Не найдена книга") { StatusCode = (int)HttpStatusCode.NotFound };
+                }
+                await bookRepository.SetBookStateToSoldAsync(book, user);
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
     }

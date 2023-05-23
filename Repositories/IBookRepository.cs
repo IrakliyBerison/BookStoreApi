@@ -51,7 +51,7 @@ namespace BookStoreApi.Repositories
         /// </summary>
         /// <param name="book"></param>
         /// <returns></returns>
-        public Task<Book> SetBookStateToExistAsync(Book book);
+        public Task<Book> SetBookStateToExistAsync(Book book, User user);
 
         /// <summary>
         /// 10. Метод изменения статуса книги с "в наличии" на "продана" по идентификатору книги(если книга не найдена выводит ошибку).  
@@ -59,7 +59,7 @@ namespace BookStoreApi.Repositories
         /// </summary>
         /// <param name="book"></param>
         /// <returns></returns>
-        public Task<Book> SetBookStateToSoldAsync(Book book);
+        public Task<Book> SetBookStateToSoldAsync(Book book, User user);
 
 
         public Task<Book> GetBookByIdAsync(Guid Id);
