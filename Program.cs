@@ -2,12 +2,8 @@ using BookStoreApi;
 using BookStoreApi.Models;
 using BookStoreApi.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
-using System.Diagnostics;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

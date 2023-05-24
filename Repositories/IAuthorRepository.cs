@@ -1,5 +1,4 @@
-﻿using Azure;
-using BookStoreApi.Models;
+﻿using BookStoreApi.Models;
 
 namespace BookStoreApi.Repositories
 {

@@ -1,7 +1,4 @@
-﻿using Azure;
-using Azure.Core;
-using Microsoft.AspNetCore.Http;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace BookStoreApi.Repositories
 {

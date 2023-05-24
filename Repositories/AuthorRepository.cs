@@ -1,6 +1,5 @@
 ﻿using BookStoreApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 
 namespace BookStoreApi.Repositories
 {

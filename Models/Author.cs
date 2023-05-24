@@ -13,6 +13,6 @@ namespace BookStoreApi.Models
         public string? Surname { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string? FullName { get; set; }
-        public DateTime? DateOfBirth { get; set; }        
+        public DateTime? DateOfBirth { get; set; }
     }
 }

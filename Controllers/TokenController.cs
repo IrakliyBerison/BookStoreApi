@@ -1,12 +1,8 @@
 ﻿using BookStoreApi.Models;
 using BookStoreApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Security.Claims;
-using System.Text;
 
 namespace BookStoreApi.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using BookStoreApi.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Security.Claims;
 
@@ -11,6 +11,9 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
+        private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1);
+        private static readonly Dictionary<Guid, TaskCompletionSource<bool>> _recordLocks = new Dictionary<Guid, TaskCompletionSource<bool>>();
+
 
         private readonly IBookRepository bookRepository;
         private readonly IUserRepository userRepository;
@@ -101,8 +104,28 @@ namespace BookStoreApi.Controllers
                 {
                     return new ObjectResult("Не найдена книга") { StatusCode = (int)HttpStatusCode.NotFound };
                 }
-                await bookRepository.SetBookStateToSoldAsync(book, user);
-                return Ok();
+
+
+                if (!_recordLocks.ContainsKey(book.Id))
+                {
+                    _recordLocks[book.Id] = new TaskCompletionSource<bool>();
+                    try
+                    {
+                        await _lock.WaitAsync();
+                        await bookRepository.SetBookStateToSoldAsync(book, user);
+                        return Ok("Success");
+                    }
+                    finally
+                    {
+                        _lock.Release();
+                        _recordLocks[book.Id].TrySetResult(true);
+                        _recordLocks.Remove(book.Id);
+                    }
+                }
+                else
+                {
+                    return new ObjectResult("Данная книга уже переводится в статус продана.") { StatusCode = (int)HttpStatusCode.Conflict };
+                }
             }
             else
             {

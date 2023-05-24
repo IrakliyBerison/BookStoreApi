@@ -1,5 +1,4 @@
 ﻿using BookStoreApi.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -31,7 +30,7 @@ namespace BookStoreApi.Controllers
 
         [HttpGet]
         [Route("create-author")]
-        public async Task<IActionResult> CreateAuthorAsync([Required]string firstName, [Required] string lastName, [Required] string surname)
+        public async Task<IActionResult> CreateAuthorAsync([Required] string firstName, [Required] string lastName, [Required] string surname)
         {
             var author = await authorRepository.CreateAuthorAsync(firstName, lastName, surname);
             return Ok(author);

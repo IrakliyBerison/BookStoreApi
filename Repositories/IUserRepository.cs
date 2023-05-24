@@ -1,5 +1,4 @@
 ﻿using BookStoreApi.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BookStoreApi.Repositories
